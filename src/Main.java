@@ -8,37 +8,8 @@ import Course.Course;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.Objects;
 import java.util.Scanner;
 
-
-/**
- * Đề 3: Quản lý khoá học
- * ❖ Yêu cầu:
- * ➢ Xây dựng ứng dụng quản lý khoá học, trong đó có các chức năng:
- * KhoaHoc(id, ten, soluonghocvien, boolean trangthai)
- * ArrayList<HocVien>
- * ■ Xem danh sách các khoá học: STT, ID khoá học, tên khoá học, số lượng học viên,
- * trạng thái khoá học (trạng thái đã bắt đầu hay chưa)
- * khoaHocDetails(int id) - output tenkhoahoc, danh sach hv
- * ● Xem chi tiết khoá học (bằng ID): tên khoá học, danh sách học viên hiện có
- *
- * addKhoaHoc(KhoaHoc)
- * ● Thêm/sửa khoá học: Tên khóa học, số lượng học viên
- * deleteKhoaHoc(int id)
- * ● Xoá khoá học
- * HocVien(id, ten, tuoi
- * ■ Xem danh sách học viên: STT, ID học viên, tên học viên, tuổi, ngày giờ tham gia khoá
- * học, tên khoá học (sắp xếp theo khoá học)
- * ● Thêm/sửa thông tin học viên: Tên học viên, tuổi, tên khóa học
- * ● Xoá nhân viên
- *
- * ❖ Lưu ý:
- * ➢ Chỉ được tổ chức tối đa 5 khoá học, mỗi khoá học chỉ được tối đa 3 học viên
- * ➢ Khi đủ số lượng học viên, khoá học đó sẽ có trạng thái bắt đầu
- * ➢ Xoá học viên trong khoá học đang bắt đầu không ảnh hưởng tới trạng thái của khoá học,
- * tuy nhiên nếu xoá toàn bộ học viên thì khoá học sẽ chuyển trạng thái về chưa bắt đầu
- */
 public class Main {
     public static int userInputInt(){
         int choice = 0;
@@ -62,7 +33,7 @@ public class Main {
         return choice;
     }
 
-    public static void showData(ArrayList<Course> courses){
+    public static void showCourses(ArrayList<Course> courses){
         int stt = 1;
         System.out.println("=============================================");
         System.out.println("         DANH SÁCH KHÓA HỌC             ");
@@ -74,16 +45,14 @@ public class Main {
         System.out.println("=============================================");
     }
 
-    public static void showDataDetail(ArrayList<Course> courses, String id ){
-        Course course = new Course();
+    public static void showCoursesDetail(ArrayList<Course> courses, String id ){
         for (Course item : courses){
-            if (item.getCourseId().equals(id)){
-                System.out.println(item.getCourseName() + " - " + item.getQuantityStudent());
+             if (item.getCourseId().equals(id)){
+                    System.out.println(item.getCourseName() + " - " + item.getQuantityStudent());
                 return;
             }
         }
         System.out.println("Không tìm thấy khóa học mà bạn đang tìm kiếm !!!");
-
     }
 
     public  static void addCourse(ArrayList<Course> courses, int index, String courseId , String courseName, int quantityStudent, int choice2){
@@ -106,20 +75,20 @@ public class Main {
                     System.out.println("Vui lòng chỉ truyền case 2 hoặc 3");
                     break;
             }
-
-            int stt = 1;
-            System.out.println("=============================================");
-            System.out.println("         DANH SÁCH KHÓA HỌC             ");
-            for (Course item: courses){
-                System.out.println(stt + " - " + item.getCourseId() + " - " + item.getCourseName() + " - " + item.getQuantityStudent() + " - " + item.getStatus());
-                stt++;
-            }
-            System.out.println("=============================================");
+            showCourses(courses);
         }
     }
 
-    public static void editCourse(ArrayList<Course> courses, String courseIdEdit, String courseNameEdit, int quantityStudentEdit){
-
+    public static void deleteCourse(ArrayList<Course> courses, String courseId){
+        for (Course item : courses){
+            if (item.getCourseId().equals(courseId)){
+                courses.remove(item);
+                showCourses(courses);
+                System.out.println("Đã xoá khóa học: " + item.getCourseName() + " - " + item.getQuantityStudent());
+                return;
+            }
+        }
+        System.out.println("Không tìm thấy khóa học với ID: " + courseId);
     }
 
 
@@ -141,7 +110,7 @@ public class Main {
         int choice1 = userInputInt();
         switch (choice1) {
             case 1:
-                showData(courses);
+                showCourses(courses);
                 System.out.println("1. Xem chi tiết khoá học ");
                 System.out.println("2. Thêm khoá học ");
                 System.out.println("3. Sửa khoá học ");
@@ -154,7 +123,7 @@ public class Main {
                     case 1:
                         System.out.print("Khóa học ID: ");
                         String choice3 = userInputString();
-                        showDataDetail(courses, choice3);
+                        showCoursesDetail(courses, choice3);
                         System.out.println("=============================================");
                         break;
                     case 2:
@@ -164,7 +133,7 @@ public class Main {
                         String courseName = userInputString();
                         System.out.print("Số lượng học viên: ");
                         int quantityStudent = userInputInt();
-//                      index = 0 (Truyền vào hàm nhưng không sử dụng, mục đích để hộp hàm add/edit để viết gọn code)
+                      //index = 0 (Truyền vào hàm nhưng không sử dụng, mục đích để hộp hàm add/edit để viết gọn code)
                         addCourse(courses, 0, courseId, courseName, quantityStudent, choice2);
                         break;
                     case 3:
@@ -180,7 +149,9 @@ public class Main {
                         addCourse(courses, indexCourse, courseIdEdit, courseNameEdit, quantityStudentEdit, choice2);
                         break;
                     case 4:
-                        System.out.println("Chọn 4");
+                        System.out.print("Khóa học ID: ");
+                        String courseID = userInputString();
+                        deleteCourse(courses, courseID);
                         break;
                     case 5:
                         System.exit(0);
